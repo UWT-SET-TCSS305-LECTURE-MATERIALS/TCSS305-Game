@@ -1,4 +1,4 @@
-package edu.uw.tcss.app;
+package edu.uw.tcss;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
