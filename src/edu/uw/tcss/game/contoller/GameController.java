@@ -117,16 +117,28 @@ public class GameController extends JPanel implements PropertyChangeListener {
     }
     
     private void addListeners() {
-        myUpButton.addActionListener(theEvent -> myGame.moveUp());
-        myDownButton.addActionListener(theEvent -> myGame.moveDown());
-        myRightButton.addActionListener(theEvent -> myGame.moveRight());
-        myLeftButton.addActionListener(theEvent -> myGame.moveLeft());
+        myUpButton.addActionListener(theEvent -> {
+            myGame.moveUp();
+            requestFocusInWindow();
+        });
+        myDownButton.addActionListener(theEvent -> {
+            myGame.moveDown();
+            requestFocusInWindow();
+
+        });
+        myRightButton.addActionListener(theEvent -> {
+            myGame.moveRight();
+            requestFocusInWindow();
+        });
+        myLeftButton.addActionListener(theEvent -> {
+            myGame.moveLeft();
+            requestFocusInWindow();
+        });
         myNewGameButton.addActionListener(theEvent -> {
             myGame.newGame();
             requestFocusInWindow();
         });
         addKeyListener(new MyKeyAdapter());
-        requestFocusInWindow();
     }
 
     /**
