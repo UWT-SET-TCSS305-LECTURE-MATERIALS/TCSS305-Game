@@ -1,8 +1,8 @@
 package edu.uw.tcss.game.view;
 
-import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.*;
+import static edu.uw.tcss.game.model.player.PropertyChangeEnabledPlayerControls.*;
 
-import edu.uw.tcss.game.model.Game;
+import edu.uw.tcss.game.model.player.Player;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
@@ -43,8 +43,8 @@ public class GameBoardPanel extends JPanel implements PropertyChangeListener {
     private void setupComponents() {
         setPreferredSize(
                 new Dimension(
-                        Game.WIDTH * GAME_PIECE_SIZE,
-                        Game.HEIGHT * GAME_PIECE_SIZE));
+                        Player.WIDTH * GAME_PIECE_SIZE,
+                        Player.HEIGHT * GAME_PIECE_SIZE));
     }
 
     // Suppression is OK here as this method is Overriden from a Library class.
@@ -59,19 +59,19 @@ public class GameBoardPanel extends JPanel implements PropertyChangeListener {
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
         g2d.setPaint(Color.BLACK);
-        for (int row = 1; row < Game.HEIGHT; row++) {
+        for (int row = 1; row < Player.HEIGHT; row++) {
             g2d.drawLine(0,
                     row * GAME_PIECE_SIZE,
-                    Game.WIDTH * GAME_PIECE_SIZE,
+                    Player.WIDTH * GAME_PIECE_SIZE,
                     row * GAME_PIECE_SIZE
             );
         }
 
-        for (int col = 1; col < Game.WIDTH; col++) {
+        for (int col = 1; col < Player.WIDTH; col++) {
             g2d.drawLine(col * GAME_PIECE_SIZE,
                     0,
                     col * GAME_PIECE_SIZE,
-                    Game.HEIGHT * GAME_PIECE_SIZE
+                    Player.HEIGHT * GAME_PIECE_SIZE
             );
         }
 

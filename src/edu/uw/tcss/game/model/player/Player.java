@@ -1,4 +1,4 @@
-package edu.uw.tcss.game.model;
+package edu.uw.tcss.game.model.player;
 
 import java.awt.Point;
 import java.beans.PropertyChangeListener;
@@ -7,20 +7,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The Game class is used simulate a simple Game. THe game is made up of a board with
- * a width and height (see public members) and a piece.
+ * The Player class is used simulate a player in a simple game.
  * 
  * @author Charles Bryan
- * @version Autumn 2018
+ * @version Winter 2025
  */
-public class Game implements PropertyChangeEnabledGameControls {
+public class Player implements PropertyChangeEnabledPlayerControls {
 
     /** The width of the game board. */
     public static final int WIDTH = 8;
     
     /** The height of the game board. */
     public static final int HEIGHT = 10;
-    
 
     /** The manager of PropertyChangeListeners. */
     private final PropertyChangeSupport myPcs;
@@ -31,7 +29,7 @@ public class Game implements PropertyChangeEnabledGameControls {
     /**
      * Creates a game with a piece in the starting location 0, 0.
      */
-    public Game() {
+    public Player() {
         super();
         myLocation = new Point(0, 0);
         myPcs = new PropertyChangeSupport(this);

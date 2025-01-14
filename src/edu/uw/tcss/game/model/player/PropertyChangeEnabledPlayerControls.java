@@ -1,4 +1,4 @@
-package edu.uw.tcss.game.model;
+package edu.uw.tcss.game.model.player;
 
 import java.beans.PropertyChangeListener;
 
@@ -14,7 +14,7 @@ import java.beans.PropertyChangeListener;
  * @version Fall 2018
  *
  */
-public interface PropertyChangeEnabledGameControls extends GameControls {
+public interface PropertyChangeEnabledPlayerControls extends PlayerControls {
  
     /*
      * Add your own constant Property values here. 

@@ -1,12 +1,12 @@
  
 package edu.uw.tcss.game.contoller;
 
-import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.PROPERTY_NEW_GAME;
-import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.PROPERTY_VALID_DIRECTIONS;
+import static edu.uw.tcss.game.model.player.PropertyChangeEnabledPlayerControls.PROPERTY_NEW_GAME;
+import static edu.uw.tcss.game.model.player.PropertyChangeEnabledPlayerControls.PROPERTY_VALID_DIRECTIONS;
 
-import edu.uw.tcss.game.model.Game;
-import edu.uw.tcss.game.model.GameControls;
-import edu.uw.tcss.game.model.PropertyChangeEnabledGameControls;
+import edu.uw.tcss.game.model.player.Player;
+import edu.uw.tcss.game.model.player.PlayerControls;
+import edu.uw.tcss.game.model.player.PropertyChangeEnabledPlayerControls;
 import edu.uw.tcss.game.view.GameBoardPanel;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -14,7 +14,6 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serial;
-import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
 
@@ -61,7 +60,7 @@ public class GameController extends JPanel implements PropertyChangeListener {
     private static final int WINDOW_SIZE = 200;
     
     /** The Color object this class controls. */
-    private final PropertyChangeEnabledGameControls myGame;
+    private final PropertyChangeEnabledPlayerControls myGame;
 
     private final JButton myUpButton;
     private final JButton myDownButton;
@@ -75,7 +74,7 @@ public class GameController extends JPanel implements PropertyChangeListener {
      * 
      * @param theGame the Game object this class controls
      */
-    public GameController(final Game theGame) {
+    public GameController(final Player theGame) {
         super(new GridLayout(ROW, COL));
         myGame = theGame;
         myDownButton = new JButton("v");
@@ -159,7 +158,7 @@ public class GameController extends JPanel implements PropertyChangeListener {
         final JFrame frame = new JFrame("Play the Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        final Game game = new Game();
+        final Player game = new Player();
        
         //Create and set up the content pane.
         final GameController pane = new GameController(game);
@@ -206,12 +205,12 @@ public class GameController extends JPanel implements PropertyChangeListener {
             // unchecked cast warning is OK. Casting Generic Typed objects from Object
             // is a known "thing"" with Generics. In a sense, we'll be fine here at
             // runtime but the Compiler is concerned about it...
-            final Map<GameControls.Move, Boolean> moves =
-                    (Map<GameControls.Move, Boolean>) theEvent.getNewValue();
-            myUpButton.setEnabled(moves.get(GameControls.Move.UP));
-            myDownButton.setEnabled(moves.get(GameControls.Move.DOWN));
-            myLeftButton.setEnabled(moves.get(GameControls.Move.LEFT));
-            myRightButton.setEnabled(moves.get(GameControls.Move.RIGHT));
+            final Map<PlayerControls.Move, Boolean> moves =
+                    (Map<PlayerControls.Move, Boolean>) theEvent.getNewValue();
+            myUpButton.setEnabled(moves.get(PlayerControls.Move.UP));
+            myDownButton.setEnabled(moves.get(PlayerControls.Move.DOWN));
+            myLeftButton.setEnabled(moves.get(PlayerControls.Move.LEFT));
+            myRightButton.setEnabled(moves.get(PlayerControls.Move.RIGHT));
         }
 
     }
