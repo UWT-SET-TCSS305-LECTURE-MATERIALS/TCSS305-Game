@@ -2,8 +2,9 @@ package edu.uw.tcss.game;
 
 
 import edu.uw.tcss.game.contoller.GameController;
-
-import javax.swing.*;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * The driver class for this demonstration code. 
@@ -30,8 +31,6 @@ public final class Application {
     public static void main(final String[] theArgs) {
         /* Use an appropriate Look and Feel */
         try {
-//            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-//          UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
             UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
         } catch (final UnsupportedLookAndFeelException
                        | IllegalAccessException

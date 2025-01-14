@@ -1,14 +1,14 @@
 package edu.uw.tcss.game.view;
 
-import edu.uw.tcss.game.model.Game;
+import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.*;
 
-import javax.swing.*;
+import edu.uw.tcss.game.model.Game;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import javax.swing.JPanel;
 
-import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.*;
 
 /**
  * This class represents a visual representation of a model.Game.
@@ -47,6 +47,8 @@ public class GameBoardPanel extends JPanel implements PropertyChangeListener {
                         Game.HEIGHT * GAME_PIECE_SIZE));
     }
 
+    // Suppression is OK here as this method is Overriden from a Library class.
+    @SuppressWarnings("PublicMethodNotExposedInInterface")
     @Override
     public void paintComponent(final Graphics theGraphics) {
         super.paintComponent(theGraphics);
@@ -85,25 +87,28 @@ public class GameBoardPanel extends JPanel implements PropertyChangeListener {
 
     @Override
     public void propertyChange(final PropertyChangeEvent theEvent) {
-        myPieceColor = Color.BLACK;
-        if (PROPERTY_DOWN.equals(theEvent.getPropertyName())) {
-            myGamePiece.setLocation((Point) theEvent.getNewValue());
-            repaint();
-        } else if (PROPERTY_UP.equals(theEvent.getPropertyName())) {
-            myGamePiece.setLocation((Point) theEvent.getNewValue());
-            repaint();
-        } else if (PROPERTY_RIGHT.equals(theEvent.getPropertyName())) {
-            myGamePiece.setLocation((Point) theEvent.getNewValue());
-            repaint();
-        } else if (PROPERTY_LEFT.equals(theEvent.getPropertyName())) {
-            myGamePiece.setLocation((Point) theEvent.getNewValue());
-            repaint();
-        } else if (PROPERTY_NEW_GAME.equals(theEvent.getPropertyName())) {
-            myGamePiece.setLocation((Point) theEvent.getNewValue());
-            repaint();
-        } else if (PROPERTY_INVALID.equals(theEvent.getPropertyName())) {
-            myPieceColor = Color.RED;
-            repaint();
+
+        switch (theEvent.getPropertyName()) {
+            case PROPERTY_DOWN:
+            case PROPERTY_LEFT:
+            case PROPERTY_UP:
+            case PROPERTY_RIGHT:
+            case PROPERTY_NEW_GAME:
+                myGamePiece.setLocation((Point) theEvent.getNewValue());
+                myPieceColor = Color.BLACK;
+                repaint();
+                break;
+            case PROPERTY_INVALID:
+                myPieceColor = Color.RED;
+                repaint();
+                break;
+            case PROPERTY_VALID_DIRECTIONS:
+                // for now do nothing!
+                break;
+            default:
+                throw new IllegalStateException("Hmmm. Here is the "
+                        + "PropertyName you have not considered: "
+                        + theEvent.getPropertyName());
         }
     }
 }

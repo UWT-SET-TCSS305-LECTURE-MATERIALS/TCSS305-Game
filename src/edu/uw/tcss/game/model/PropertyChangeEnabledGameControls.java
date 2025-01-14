@@ -64,6 +64,15 @@ public interface PropertyChangeEnabledGameControls extends GameControls {
      */
     String PROPERTY_NEW_GAME = "A new game is afoot!";
 
+    /**
+     * A property name for state changes on the model.
+     * Used when a new game is started and when the game piece location has changed.
+     * Expected type for newValue()
+     *      java.util.Map<edu.uw.tcss.game.model.GameControls.Move, Boolean>
+     *          (the direction and whether or not they are valid. )
+     */
+    String PROPERTY_VALID_DIRECTIONS = "These are the directions in which you may move!";
+
 
     /**
      * Add a PropertyChangeListener to the listener list. The listener is registered for 

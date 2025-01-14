@@ -1,19 +1,23 @@
  
 package edu.uw.tcss.game.contoller;
 
+import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.PROPERTY_NEW_GAME;
+import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.PROPERTY_VALID_DIRECTIONS;
+
 import edu.uw.tcss.game.model.Game;
+import edu.uw.tcss.game.model.GameControls;
 import edu.uw.tcss.game.model.PropertyChangeEnabledGameControls;
 import edu.uw.tcss.game.view.GameBoardPanel;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serial;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.*;
 
-import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.PROPERTY_NEW_GAME;
 
 
 /**
@@ -45,10 +49,10 @@ public class GameController extends JPanel implements PropertyChangeListener {
     private static final int COL = 3;
     
     /** Amount in Pixels for the Horizontal margin. */
-    private static final int HORIZONATAL_MARGIN = 20; 
+    private static final int HORIZONTAL_MARGIN = 20;
     
     /** Amount in Pixels for the Vertical margin. */
-    private static final int VERTICALL_MARGIN = 10; 
+    private static final int VERTICAL_MARGIN = 10;
     
     /** Amount in columns for the text area. */
     private static final int BUTTON_SIZE = 45;
@@ -101,10 +105,10 @@ public class GameController extends JPanel implements PropertyChangeListener {
      * Lay out the components.
      */
     private void layoutComponents() {
-        setBorder(BorderFactory.createEmptyBorder(VERTICALL_MARGIN,
-                HORIZONATAL_MARGIN,
-                VERTICALL_MARGIN,
-                VERTICALL_MARGIN));
+        setBorder(BorderFactory.createEmptyBorder(VERTICAL_MARGIN,
+                HORIZONTAL_MARGIN,
+                VERTICAL_MARGIN,
+                VERTICAL_MARGIN));
         add(new JPanel());
         add(myUpButton);
         add(new JPanel());
@@ -145,9 +149,9 @@ public class GameController extends JPanel implements PropertyChangeListener {
      * Create the GUI and show it.  For thread safety,
      * this method should be invoked from the
      * event-dispatching thread.
-     * 
+     * <p>
      * NOTE: This is the place where all of the parts and pieces of this project are in 
-     *      the same place. This is where we should instantiate our MOdel and add it to the
+     *      the same place. This is where we should instantiate our Model and add it to the
      *      controller and view.  
      */
     public static void createAndShowGUI() {
@@ -174,17 +178,14 @@ public class GameController extends JPanel implements PropertyChangeListener {
         final GameBoardPanel gamePanel = new GameBoardPanel();
         game.addPropertyChangeListener(gamePanel);
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                final JFrame colorFrame = new JFrame();
-                colorFrame.setTitle("Color Display");
-                colorFrame.setContentPane(gamePanel);
-                colorFrame.pack();
-                colorFrame.setVisible(true);
-                colorFrame.setLocation(frame.getLocation().x + frame.getWidth(),
-                                       frame.getLocation().y);
-            }
+        SwingUtilities.invokeLater(() -> {
+            final JFrame colorFrame = new JFrame();
+            colorFrame.setTitle("Color Display");
+            colorFrame.setContentPane(gamePanel);
+            colorFrame.pack();
+            colorFrame.setVisible(true);
+            colorFrame.setLocation(frame.getLocation().x + frame.getWidth(),
+                                   frame.getLocation().y);
         });
         
         
@@ -193,6 +194,7 @@ public class GameController extends JPanel implements PropertyChangeListener {
         frame.setVisible(true);
     }
 
+
     @Override
     public void propertyChange(final PropertyChangeEvent theEvent) {
         if (PROPERTY_NEW_GAME.equals(theEvent.getPropertyName())) {
@@ -200,22 +202,39 @@ public class GameController extends JPanel implements PropertyChangeListener {
             myDownButton.setEnabled(true);
             myLeftButton.setEnabled(true);
             myRightButton.setEnabled(true);
+        } else if (PROPERTY_VALID_DIRECTIONS.equals(theEvent.getPropertyName())) {
+            // unchecked cast warning is OK. Casting Generic Typed objects from Object
+            // is a known "thing"" with Generics. In a sense, we'll be fine here at
+            // runtime but the Compiler is concerned about it...
+            final Map<GameControls.Move, Boolean> moves =
+                    (Map<GameControls.Move, Boolean>) theEvent.getNewValue();
+            myUpButton.setEnabled(moves.get(GameControls.Move.UP));
+            myDownButton.setEnabled(moves.get(GameControls.Move.DOWN));
+            myLeftButton.setEnabled(moves.get(GameControls.Move.LEFT));
+            myRightButton.setEnabled(moves.get(GameControls.Move.RIGHT));
         }
+
     }
 
     private final class MyKeyAdapter extends KeyAdapter {
 
+        MyKeyAdapter() {
+            super();
+        }
+
         @Override
         public void keyPressed(final KeyEvent theEvent) {
-            if (theEvent.getKeyCode() == KeyEvent.VK_RIGHT) {
-                myGame.moveRight();
-            } else if (theEvent.getKeyCode() == KeyEvent.VK_LEFT) {
-                myGame.moveLeft();
-            } else if (theEvent.getKeyCode() == KeyEvent.VK_UP) {
-                myGame.moveUp();
-            } else if (theEvent.getKeyCode() == KeyEvent.VK_DOWN) {
-                myGame.moveDown();
-            }
+            checkKey(theEvent.getKeyCode()).run();
+        }
+
+        private Runnable checkKey(final int theVirtualKey) {
+            return switch (theVirtualKey) {
+                case KeyEvent.VK_DOWN -> myGame::moveDown;
+                case KeyEvent.VK_UP -> myGame::moveUp;
+                case KeyEvent.VK_LEFT -> myGame::moveLeft;
+                case KeyEvent.VK_RIGHT -> myGame::moveRight;
+                default -> () -> { }; // not a key we care about so "do nothing."
+            };
         }
     }
 
