@@ -1,15 +1,13 @@
 package edu.uw.tcss.game;
 
-
-import edu.uw.tcss.game.contoller.GameController;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import edu.uw.tcss.game.gui.contoller.GameController;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * The driver class for this demonstration code. 
  * @author Charles Bryan
- * @version 1
+ * @version Winter 2025
  *
  */
 public final class Application {
@@ -29,18 +27,7 @@ public final class Application {
      * @param theArgs Command line arguments, ignored.
      */
     public static void main(final String[] theArgs) {
-        /* Use an appropriate Look and Feel */
-        try {
-            UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-        } catch (final UnsupportedLookAndFeelException
-                       | IllegalAccessException
-                       | InstantiationException
-                       | ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
-        /* Turn off metal's use of bold fonts */
-        UIManager.put("swing.boldMetal", Boolean.FALSE);
-        
+        FlatIntelliJLaf.setup();
         SwingUtilities.invokeLater(GameController::createAndShowGUI);
     }
 }

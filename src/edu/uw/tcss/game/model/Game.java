@@ -1,9 +1,7 @@
 package edu.uw.tcss.game.model;
 
-import java.awt.Point;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -11,7 +9,7 @@ import java.util.Map;
  * a width and height (see public members) and a piece.
  * 
  * @author Charles Bryan
- * @version Autumn 2018
+ * @version Winter 2025
  */
 public class Game implements PropertyChangeEnabledGameControls {
 
@@ -20,13 +18,12 @@ public class Game implements PropertyChangeEnabledGameControls {
     
     /** The height of the game board. */
     public static final int HEIGHT = 10;
-    
 
     /** The manager of PropertyChangeListeners. */
     private final PropertyChangeSupport myPcs;
         
     /** The game's piece location. */
-    private final Point myLocation;
+    private Point myLocation;
 
     /**
      * Creates a game with a piece in the starting location 0, 0.
@@ -68,10 +65,10 @@ public class Game implements PropertyChangeEnabledGameControls {
     @Override
     public void moveUp() {
         if (isUpValid()) {
-            myLocation.setLocation(myLocation.getX(), myLocation.getY() - 1);
-            myPcs.firePropertyChange(PROPERTY_UP, null, new Point(myLocation));
+            myLocation = myLocation.transform(0, -1);
+            myPcs.firePropertyChange(PROPERTY_UP, null, myLocation);
         } else {
-            myPcs.firePropertyChange(PROPERTY_INVALID, new Point(myLocation), Boolean.TRUE);
+            myPcs.firePropertyChange(PROPERTY_INVALID, myLocation, Boolean.TRUE);
         }
         updateValidDirections();
     }
@@ -86,10 +83,10 @@ public class Game implements PropertyChangeEnabledGameControls {
     @Override
     public void moveDown() {
         if (isDownValid()) {
-            myLocation.setLocation(myLocation.getX(), myLocation.getY() + 1);
-            myPcs.firePropertyChange(PROPERTY_DOWN, null, new Point(myLocation));
+            myLocation = myLocation.transform(0, 1);
+            myPcs.firePropertyChange(PROPERTY_DOWN, null, myLocation);
         } else {
-            myPcs.firePropertyChange(PROPERTY_INVALID, new Point(myLocation), Boolean.TRUE);
+            myPcs.firePropertyChange(PROPERTY_INVALID, myLocation, Boolean.TRUE);
         }
         updateValidDirections();
     }
@@ -104,10 +101,10 @@ public class Game implements PropertyChangeEnabledGameControls {
     @Override
     public void moveRight() {
         if (isRightValid()) {
-            myLocation.setLocation(myLocation.getX() + 1, myLocation.getY());
-            myPcs.firePropertyChange(PROPERTY_RIGHT, null, new Point(myLocation));
+            myLocation = myLocation.transform(1, 0);
+            myPcs.firePropertyChange(PROPERTY_RIGHT, null, myLocation);
         } else {
-            myPcs.firePropertyChange(PROPERTY_INVALID, new Point(myLocation), Boolean.TRUE);
+            myPcs.firePropertyChange(PROPERTY_INVALID, myLocation, Boolean.TRUE);
         }
         updateValidDirections();
     }
@@ -122,10 +119,10 @@ public class Game implements PropertyChangeEnabledGameControls {
     @Override
     public void moveLeft() {
         if (isLeftValid()) {
-            myLocation.setLocation(myLocation.getX() - 1, myLocation.getY());
-            myPcs.firePropertyChange(PROPERTY_LEFT, null, new Point(myLocation));
+            myLocation = myLocation.transform(-1, 0);
+            myPcs.firePropertyChange(PROPERTY_LEFT, null, myLocation);
         } else {
-            myPcs.firePropertyChange(PROPERTY_INVALID, new Point(myLocation), Boolean.TRUE);
+            myPcs.firePropertyChange(PROPERTY_INVALID, myLocation, Boolean.TRUE);
         }
         updateValidDirections();
     }
@@ -139,8 +136,8 @@ public class Game implements PropertyChangeEnabledGameControls {
      */
     @Override
     public void newGame() {
-        myLocation.setLocation(0, 0);
-        myPcs.firePropertyChange(PROPERTY_NEW_GAME, null, new Point(myLocation));
+        myLocation = new Point(0, 0);
+        myPcs.firePropertyChange(PROPERTY_NEW_GAME, null, myLocation);
         updateValidDirections();
     }
 
@@ -168,28 +165,34 @@ public class Game implements PropertyChangeEnabledGameControls {
     }
 
     private void updateValidDirections() {
-        final Map<Move, Boolean> directions = new HashMap<>();
-        directions.put(Move.UP, isUpValid());
-        directions.put(Move.DOWN, isDownValid());
-        directions.put(Move.LEFT, isLeftValid());
-        directions.put(Move.RIGHT, isRightValid());
-        myPcs.firePropertyChange(PROPERTY_VALID_DIRECTIONS, null, directions);
+        final ValidMoves directions =
+                new ValidMoves(
+                        Map.of(
+                            Move.UP, isUpValid(),
+                            Move.DOWN, isDownValid(),
+                            Move.LEFT, isLeftValid(),
+                            Move.RIGHT, isRightValid()));
+
+        myPcs.firePropertyChange(
+                PROPERTY_VALID_DIRECTIONS,
+                null,
+                directions);
     }
 
     private boolean isUpValid() {
-        return myLocation.getY() > 0;
+        return myLocation.y() > 0;
     }
 
     private boolean isDownValid() {
-        return myLocation.getY() < HEIGHT - 1;
+        return myLocation.y() < HEIGHT - 1;
     }
 
     private boolean isLeftValid() {
-        return myLocation.getX() > 0;
+        return myLocation.x() > 0;
     }
 
     private boolean isRightValid() {
-        return myLocation.getX() < WIDTH - 1;
+        return myLocation.x() < WIDTH - 1;
     }
 
 

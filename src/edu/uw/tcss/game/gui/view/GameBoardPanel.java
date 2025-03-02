@@ -1,20 +1,31 @@
-package edu.uw.tcss.game.view;
+package edu.uw.tcss.game.gui.view;
 
-import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.*;
+import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.PROPERTY_DOWN;
+import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.PROPERTY_INVALID;
+import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.PROPERTY_LEFT;
+import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.PROPERTY_NEW_GAME;
+import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.PROPERTY_RIGHT;
+import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.PROPERTY_UP;
+import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.PROPERTY_VALID_DIRECTIONS;
 
 import edu.uw.tcss.game.model.Game;
-import java.awt.*;
+import edu.uw.tcss.game.model.GameControls;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JPanel;
 
-
 /**
  * This class represents a visual representation of a model.Game.
  *
  * @author Charles Bryan
- * @version AU 2024
+ * @version Winter 2025
  */
 public class GameBoardPanel extends JPanel implements PropertyChangeListener {
 
@@ -94,7 +105,9 @@ public class GameBoardPanel extends JPanel implements PropertyChangeListener {
             case PROPERTY_UP:
             case PROPERTY_RIGHT:
             case PROPERTY_NEW_GAME:
-                myGamePiece.setLocation((Point) theEvent.getNewValue());
+                final GameControls.Point p =
+                        (GameControls.Point) theEvent.getNewValue();
+                myGamePiece.setLocation(p.x(), p.y());
                 myPieceColor = Color.BLACK;
                 repaint();
                 break;

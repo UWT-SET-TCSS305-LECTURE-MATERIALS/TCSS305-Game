@@ -1,30 +1,34 @@
  
-package edu.uw.tcss.game.contoller;
+package edu.uw.tcss.game.gui.contoller;
 
 import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.PROPERTY_NEW_GAME;
 import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.PROPERTY_VALID_DIRECTIONS;
 
+import edu.uw.tcss.game.gui.view.GameBoardPanel;
 import edu.uw.tcss.game.model.Game;
 import edu.uw.tcss.game.model.GameControls;
 import edu.uw.tcss.game.model.PropertyChangeEnabledGameControls;
-import edu.uw.tcss.game.view.GameBoardPanel;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serial;
-import java.util.HashMap;
 import java.util.Map;
-import javax.swing.*;
-
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 
 /**
- *  A controller for ObservableColor.
+ *  A controller for theGame.
  * 
  *  @author Charles Bryan
- *  @version Autumn 2015 
+ *  @version Winter 2025
  */
 public class GameController extends JPanel implements PropertyChangeListener {
     
@@ -123,24 +127,27 @@ public class GameController extends JPanel implements PropertyChangeListener {
     private void addListeners() {
         myUpButton.addActionListener(theEvent -> {
             myGame.moveUp();
+            // needed to give foucs back to the contaiing panel. This is so that
+            // the panel with the KeyListener captures the KeyEvents, not the
+            // button that was just clicked.
             requestFocusInWindow();
         });
         myDownButton.addActionListener(theEvent -> {
             myGame.moveDown();
-            requestFocusInWindow();
+            requestFocusInWindow(); // See above
 
         });
         myRightButton.addActionListener(theEvent -> {
             myGame.moveRight();
-            requestFocusInWindow();
+            requestFocusInWindow(); // See above
         });
         myLeftButton.addActionListener(theEvent -> {
             myGame.moveLeft();
-            requestFocusInWindow();
+            requestFocusInWindow(); // See above
         });
         myNewGameButton.addActionListener(theEvent -> {
             myGame.newGame();
-            requestFocusInWindow();
+            requestFocusInWindow(); // See above
         });
         addKeyListener(new MyKeyAdapter());
     }
@@ -173,25 +180,26 @@ public class GameController extends JPanel implements PropertyChangeListener {
         frame.setLocation(SCREEN_SIZE.width / 2 - frame.getWidth() / 2,
                     SCREEN_SIZE.height / 2 - frame.getHeight() / 2);
         
-        //Create a color panel to listen to and demonstrate our 
-        //ObservableColor.
+        //Create a Game Panel to listen to and demonstrate our
+        //Game.
         final GameBoardPanel gamePanel = new GameBoardPanel();
         game.addPropertyChangeListener(gamePanel);
+        SwingUtilities.invokeLater(() -> createAndShowView(frame, gamePanel));
 
-        SwingUtilities.invokeLater(() -> {
-            final JFrame colorFrame = new JFrame();
-            colorFrame.setTitle("Color Display");
-            colorFrame.setContentPane(gamePanel);
-            colorFrame.pack();
-            colorFrame.setVisible(true);
-            colorFrame.setLocation(frame.getLocation().x + frame.getWidth(),
-                                   frame.getLocation().y);
-        });
-        
-        
         //Display the window.
-
         frame.setVisible(true);
+    }
+
+    private static void createAndShowView(final JFrame theControllerFrame,
+                                          final JPanel theView) {
+        final JFrame colorFrame = new JFrame();
+        colorFrame.setTitle("Color Display");
+        colorFrame.setContentPane(theView);
+        colorFrame.pack();
+        colorFrame.setVisible(true);
+        colorFrame.setLocation(
+                theControllerFrame.getLocation().x + theControllerFrame.getWidth(),
+                theControllerFrame.getLocation().y);
     }
 
 
@@ -203,11 +211,8 @@ public class GameController extends JPanel implements PropertyChangeListener {
             myLeftButton.setEnabled(true);
             myRightButton.setEnabled(true);
         } else if (PROPERTY_VALID_DIRECTIONS.equals(theEvent.getPropertyName())) {
-            // unchecked cast warning is OK. Casting Generic Typed objects from Object
-            // is a known "thing"" with Generics. In a sense, we'll be fine here at
-            // runtime but the Compiler is concerned about it...
             final Map<GameControls.Move, Boolean> moves =
-                    (Map<GameControls.Move, Boolean>) theEvent.getNewValue();
+                    ((GameControls.ValidMoves) theEvent.getNewValue()).moves();
             myUpButton.setEnabled(moves.get(GameControls.Move.UP));
             myDownButton.setEnabled(moves.get(GameControls.Move.DOWN));
             myLeftButton.setEnabled(moves.get(GameControls.Move.LEFT));

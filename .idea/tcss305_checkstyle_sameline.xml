@@ -13,12 +13,16 @@ The "braces on same line" style for Autumn 2022 TCSS 305.
   <property name="severity" value="warning"/>
   <module name="LineLength">
     <property name="ignorePattern" value="(^ *//\*@ .+$)|(^ *@.+$)"/>
-    <property name="max" value="95"/>
+    <property name="max" value="100"/>
   </module>
   <module name="TreeWalker">
-    <module name="JavadocVariable"/>
+    <module name="JavadocVariable">
+      <property name="scope" value="public"/>
+    </module>
     <module name="MissingJavadocType"/>
-    <module name="MissingJavadocMethod"/>
+    <module name="MissingJavadocMethod">
+      <property name="scope" value="public"/>
+    </module>
     <module name="MissingJavadocPackage"/>
 
     <module name="JavadocStyle">

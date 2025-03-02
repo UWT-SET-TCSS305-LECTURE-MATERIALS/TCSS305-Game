@@ -1,34 +1,14 @@
 package edu.uw.tcss.game.model;
 
+import java.util.Map;
+
 /**
  * Defines mutable behaviors for a simple "game".
  * 
  * @author Charles Bryan
- * @version 1
+ * @version Winter 2025
  */
 public interface GameControls {
-
-    /**
-     * Constants describing the valid moves for a game piece.
-     */
-    enum Move {
-        /**
-         * Describes a move in the upward direction.
-         */
-        UP,
-        /**
-         * Describes a move in the downward direction.
-         */
-        DOWN,
-        /**
-         * Describes a move in the left direction.
-         */
-        LEFT,
-        /**
-         * Describes a move in the right direction.
-         */
-        RIGHT
-    }
 
     /**
      * Moves the game piece in the direction described by the enum theMove.
@@ -67,5 +47,48 @@ public interface GameControls {
      * Starts a new game with the piece in teh starting location.
      */
     void newGame();
+
+    /**
+     * Constants describing the valid moves for a game piece.
+     */
+    enum Move {
+        /**
+         * Describes a move in the upward direction.
+         */
+        UP,
+        /**
+         * Describes a move in the downward direction.
+         */
+        DOWN,
+        /**
+         * Describes a move in the left direction.
+         */
+        LEFT,
+        /**
+         * Describes a move in the right direction.
+         */
+        RIGHT
+    }
+
+    /**
+     * Data class that represents the which moves are valid in the current state of
+     * the Game.
+     *
+     * @param moves the Map which represents the which moves are valid
+     */
+    record ValidMoves(Map<Move, Boolean> moves) { }
+
+    /**
+     * Data class that represents a "point" on the game board. Positive x
+     * moves right across "columns". Positive y moves down "rows".
+     *
+     * @param x a singular x coordinate on the game board.
+     * @param y a singular y coordinate on the game board.
+     */
+    record Point(int x, int y) {
+        Point transform(final int theX, final int theY) {
+            return new Point(x + theX, y + theY);
+        }
+    }
 
 }
