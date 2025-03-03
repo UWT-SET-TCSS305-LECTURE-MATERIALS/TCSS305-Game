@@ -149,7 +149,6 @@ public class GameController extends JPanel implements PropertyChangeListener {
             myGame.newGame();
             requestFocusInWindow(); // See above
         });
-        addKeyListener(new MyKeyAdapter());
     }
 
     /**
@@ -220,27 +219,4 @@ public class GameController extends JPanel implements PropertyChangeListener {
         }
 
     }
-
-    private final class MyKeyAdapter extends KeyAdapter {
-
-        MyKeyAdapter() {
-            super();
-        }
-
-        @Override
-        public void keyPressed(final KeyEvent theEvent) {
-            checkKey(theEvent.getKeyCode()).run();
-        }
-
-        private Runnable checkKey(final int theVirtualKey) {
-            return switch (theVirtualKey) {
-                case KeyEvent.VK_DOWN -> myGame::moveDown;
-                case KeyEvent.VK_UP -> myGame::moveUp;
-                case KeyEvent.VK_LEFT -> myGame::moveLeft;
-                case KeyEvent.VK_RIGHT -> myGame::moveRight;
-                default -> () -> { }; // not a key we care about so "do nothing."
-            };
-        }
-    }
-
 }
