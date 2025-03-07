@@ -11,6 +11,8 @@ import edu.uw.tcss.game.model.PropertyChangeEnabledGameControls;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serial;
@@ -125,7 +127,7 @@ public class GameController extends JPanel implements PropertyChangeListener {
     private void addListeners() {
         myUpButton.addActionListener(theEvent -> {
             myGame.moveUp();
-            // needed to give foucs back to the contaiing panel. This is so that
+            // needed to give foucs back to the containing panel. This is so that
             // the panel with the KeyListener captures the KeyEvents, not the
             // button that was just clicked.
             requestFocusInWindow();
@@ -133,7 +135,6 @@ public class GameController extends JPanel implements PropertyChangeListener {
         myDownButton.addActionListener(theEvent -> {
             myGame.moveDown();
             requestFocusInWindow(); // See above
-
         });
         myRightButton.addActionListener(theEvent -> {
             myGame.moveRight();
@@ -147,6 +148,9 @@ public class GameController extends JPanel implements PropertyChangeListener {
             myGame.newGame();
             requestFocusInWindow(); // See above
         });
+        addKeyListener(new MyNewKeyAdapter());
+        myNewGameButton.addKeyListener(new MyNewKeyAdapter());
+        addKeyListener(new MyControlsKeyAdapter());
     }
 
     /**
@@ -164,6 +168,11 @@ public class GameController extends JPanel implements PropertyChangeListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         final Game game = new Game();
+
+        game.addPropertyChangeListener(theEvent -> {
+            System.out.println(theEvent.getPropertyName());
+            System.out.println("Hey, cool!");
+        });
        
         //Create and set up the content pane.
         final GameController pane = new GameController(game);
@@ -185,12 +194,13 @@ public class GameController extends JPanel implements PropertyChangeListener {
 
         //Display the window.
         frame.setVisible(true);
+
     }
 
     private static void createAndShowView(final JFrame theControllerFrame,
                                           final JPanel theView) {
         final JFrame colorFrame = new JFrame();
-        colorFrame.setTitle("Color Display");
+        colorFrame.setTitle("Game Board");
         colorFrame.setContentPane(theView);
         colorFrame.pack();
         colorFrame.setVisible(true);
@@ -217,4 +227,88 @@ public class GameController extends JPanel implements PropertyChangeListener {
         }
 
     }
+
+    private class MyNewKeyAdapter extends KeyAdapter {
+
+        @Override
+        public void keyPressed(final KeyEvent theEvent) {
+            if (theEvent.getKeyCode() == KeyEvent.VK_N) {
+                myGame.newGame();
+            }
+        }
+    }
+
+    private class MyControlsKeyAdapter extends KeyAdapter {
+
+        @Override
+        public void keyPressed(final KeyEvent theEvent) {
+            mapKeys(theEvent.getKeyCode()).run();
+        }
+
+        private Runnable mapKeys(final int theKeyCode) {
+            return switch (theKeyCode) {
+                case KeyEvent.VK_W -> myGame::moveUp;
+                case KeyEvent.VK_S -> myGame::moveDown;
+                case KeyEvent.VK_A -> myGame::moveLeft;
+                case KeyEvent.VK_D -> myGame::moveRight;
+                default -> () -> { };
+            };
+        }
+    }
+
+    private class MyOtherControlseyAdapter extends KeyAdapter {
+
+        private final Map<Integer, Runnable> myKeyMap;
+
+        MyOtherControlseyAdapter() {
+            myKeyMap = mapKeys();
+        }
+
+        private Map<Integer, Runnable> mapKeys() {
+            return Map.of(
+                    KeyEvent.VK_W, myGame::moveUp,
+                    KeyEvent.VK_S, myGame::moveDown,
+                    KeyEvent.VK_A, () -> myGame.moveDown(),
+                    KeyEvent.VK_D, myGame::moveRight);
+        }
+
+
+        @Override
+        public void keyPressed(final KeyEvent theEvent) {
+            if (myKeyMap.containsKey(theEvent.getKeyCode())) {
+                myKeyMap.get(theEvent.getKeyCode()).run();
+            }
+
+            myKeyMap.getOrDefault(theEvent.getKeyCode(), () -> { }).run();
+        }
+
+    }
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

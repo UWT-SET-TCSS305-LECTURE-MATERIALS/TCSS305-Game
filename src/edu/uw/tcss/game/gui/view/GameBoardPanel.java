@@ -34,9 +34,6 @@ public class GameBoardPanel extends JPanel implements PropertyChangeListener {
      */
     private static final int GAME_PIECE_SIZE = 40;
 
-    /**
-     * The game piece.
-     */
     private final Point myGamePiece;
 
     private Color myPieceColor;
@@ -98,7 +95,6 @@ public class GameBoardPanel extends JPanel implements PropertyChangeListener {
 
     @Override
     public void propertyChange(final PropertyChangeEvent theEvent) {
-
         switch (theEvent.getPropertyName()) {
             case PROPERTY_DOWN:
             case PROPERTY_LEFT:

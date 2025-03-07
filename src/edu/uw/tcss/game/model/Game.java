@@ -130,9 +130,7 @@ public class Game implements PropertyChangeEnabledGameControls {
     /**
      * {@inheritDoc}
      *
-     * When a piece move is attempted with this method, all interested parties will be notified
-     * of the action via either PROPERTY_LEFT on a valid move or PROPERTY_INVALID on an invalid
-     * move.
+     * // TODO fix this doc
      */
     @Override
     public void newGame() {

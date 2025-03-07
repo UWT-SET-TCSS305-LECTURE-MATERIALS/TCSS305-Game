@@ -44,7 +44,7 @@ public interface GameControls {
     void moveLeft();
 
     /**
-     * Starts a new game with the piece in teh starting location.
+     * Starts a new game with the piece in the starting location.
      */
     void newGame();
 
