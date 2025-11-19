@@ -1,12 +1,11 @@
  
 package edu.uw.tcss.game.gui.contoller;
 
-import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.PROPERTY_NEW_GAME;
-import static edu.uw.tcss.game.model.PropertyChangeEnabledGameControls.PROPERTY_VALID_DIRECTIONS;
-
+import edu.uw.tcss.game.gui.util.GameIcons;
 import edu.uw.tcss.game.gui.view.GameBoardPanel;
 import edu.uw.tcss.game.model.Game;
 import edu.uw.tcss.game.model.GameControls;
+import edu.uw.tcss.game.model.GameEvent;
 import edu.uw.tcss.game.model.PropertyChangeEnabledGameControls;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -25,10 +24,10 @@ import javax.swing.SwingUtilities;
 
 
 /**
- *  A controller for theGame.
- * 
- *  @author Charles Bryan
- *  @version Winter 2025
+ * A controller for the Game.
+ *
+ * @author Charles Bryan
+ * @version Autumn 2025
  */
 public class GameController extends JPanel implements PropertyChangeListener {
     
@@ -58,19 +57,28 @@ public class GameController extends JPanel implements PropertyChangeListener {
     /** Amount in Pixels for the Vertical margin. */
     private static final int VERTICAL_MARGIN = 10;
     
-    /** Amount in columns for the text area. */
+    /** The size of control buttons in pixels. */
     private static final int BUTTON_SIZE = 45;
-    
-    /** The default size of the color panel. */
+
+    /** The default size of the panel. */
     private static final int WINDOW_SIZE = 200;
     
-    /** The Color object this class controls. */
+    /** The Game object this class controls. */
     private final PropertyChangeEnabledGameControls myGame;
 
+    /** Button to move the game piece up. */
     private final JButton myUpButton;
+
+    /** Button to move the game piece down. */
     private final JButton myDownButton;
+
+    /** Button to move the game piece left. */
     private final JButton myLeftButton;
+
+    /** Button to move the game piece right. */
     private final JButton myRightButton;
+
+    /** Button to start a new game. */
     private final JButton myNewGameButton;
     
 
@@ -82,17 +90,20 @@ public class GameController extends JPanel implements PropertyChangeListener {
     public GameController(final Game theGame) {
         super(new GridLayout(ROW, COL));
         myGame = theGame;
-        myDownButton = new JButton("v");
-        myUpButton = new JButton("^");
-        myLeftButton = new JButton("<");
-        myRightButton = new JButton(">");
-        myNewGameButton = new JButton("*");
+        myUpButton = new JButton(GameIcons.createArrowIcon(GameControls.Move.UP));
+        myDownButton = new JButton(GameIcons.createArrowIcon(GameControls.Move.DOWN));
+        myLeftButton = new JButton(GameIcons.createArrowIcon(GameControls.Move.LEFT));
+        myRightButton = new JButton(GameIcons.createArrowIcon(GameControls.Move.RIGHT));
+        myNewGameButton = new JButton(GameIcons.createNewGameIcon());
 
         setupComponents();
         layoutComponents();
         addListeners();
     }
 
+    /**
+     * Sets up component properties including button sizes and initial states.
+     */
     private void setupComponents() {
         myUpButton.setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
         myUpButton.setEnabled(false);
@@ -104,9 +115,9 @@ public class GameController extends JPanel implements PropertyChangeListener {
         myRightButton.setEnabled(false);
         myNewGameButton.setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
     }
-    
+
     /**
-     * Lay out the components.
+     * Arranges components in a 3x3 grid layout with directional buttons.
      */
     private void layoutComponents() {
         setBorder(BorderFactory.createEmptyBorder(VERTICAL_MARGIN,
@@ -123,11 +134,14 @@ public class GameController extends JPanel implements PropertyChangeListener {
         add(myDownButton);
         add(new JPanel());
     }
-    
+
+    /**
+     * Adds action and key listeners to buttons and panel.
+     */
     private void addListeners() {
         myUpButton.addActionListener(theEvent -> {
             myGame.moveUp();
-            // needed to give foucs back to the containing panel. This is so that
+            // needed to give focus back to the containing panel. This is so that
             // the panel with the KeyListener captures the KeyEvents, not the
             // button that was just clicked.
             requestFocusInWindow();
@@ -158,27 +172,21 @@ public class GameController extends JPanel implements PropertyChangeListener {
      * this method should be invoked from the
      * event-dispatching thread.
      * <p>
-     * NOTE: This is the place where all of the parts and pieces of this project are in 
+     * NOTE: This is the place where all of the parts and pieces of this project are in
      *      the same place. This is where we should instantiate our Model and add it to the
-     *      controller and view.  
+     *      controller and view.
      */
     public static void createAndShowGUI() {
         //Create and set up the window.
         final JFrame frame = new JFrame("Play the Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        final Game game = new Game();
 
-        game.addPropertyChangeListener(theEvent -> {
-            System.out.println(theEvent.getPropertyName());
-            System.out.println("Hey, cool!");
-        });
+        final Game game = Game.getInstance();
        
         //Create and set up the content pane.
         final GameController pane = new GameController(game);
-        pane.setOpaque(true); //content panes must be opaque
-        
-        //Add the ColorSlider object itself as a PCL to the model.  
+
+        //Add the GameController object itself as a PCL to the model.
         game.addPropertyChangeListener(pane);
         frame.setContentPane(pane);
         // position the frame in the center of the screen
@@ -197,38 +205,56 @@ public class GameController extends JPanel implements PropertyChangeListener {
 
     }
 
+    /**
+     * Creates and displays the game board view window.
+     *
+     * @param theControllerFrame the controller frame to position the view relative to
+     * @param theView the game board panel to display
+     */
     private static void createAndShowView(final JFrame theControllerFrame,
                                           final JPanel theView) {
-        final JFrame colorFrame = new JFrame();
-        colorFrame.setTitle("Game Board");
-        colorFrame.setContentPane(theView);
-        colorFrame.pack();
-        colorFrame.setVisible(true);
-        colorFrame.setLocation(
+        final JFrame gameBoardFrame = new JFrame();
+        gameBoardFrame.setTitle("Game Board");
+        gameBoardFrame.setContentPane(theView);
+        gameBoardFrame.pack();
+        gameBoardFrame.setResizable(false);
+        gameBoardFrame.setVisible(true);
+        gameBoardFrame.setLocation(
                 theControllerFrame.getLocation().x + theControllerFrame.getWidth(),
                 theControllerFrame.getLocation().y);
     }
 
+    /**
+     * Enables or disables directional buttons based on valid moves.
+     *
+     * @param theValidMoves the valid moves for the current game state
+     */
+    private void enableValidDirections(final GameControls.ValidMoves theValidMoves) {
+        final Map<GameControls.Move, Boolean> moves =
+                theValidMoves.moves();
+        myUpButton.setEnabled(moves.get(GameControls.Move.UP));
+        myDownButton.setEnabled(moves.get(GameControls.Move.DOWN));
+        myLeftButton.setEnabled(moves.get(GameControls.Move.LEFT));
+        myRightButton.setEnabled(moves.get(GameControls.Move.RIGHT));
+    }
 
     @Override
     public void propertyChange(final PropertyChangeEvent theEvent) {
-        if (PROPERTY_NEW_GAME.equals(theEvent.getPropertyName())) {
-            myUpButton.setEnabled(true);
-            myDownButton.setEnabled(true);
-            myLeftButton.setEnabled(true);
-            myRightButton.setEnabled(true);
-        } else if (PROPERTY_VALID_DIRECTIONS.equals(theEvent.getPropertyName())) {
-            final Map<GameControls.Move, Boolean> moves =
-                    ((GameControls.ValidMoves) theEvent.getNewValue()).moves();
-            myUpButton.setEnabled(moves.get(GameControls.Move.UP));
-            myDownButton.setEnabled(moves.get(GameControls.Move.DOWN));
-            myLeftButton.setEnabled(moves.get(GameControls.Move.LEFT));
-            myRightButton.setEnabled(moves.get(GameControls.Move.RIGHT));
+        if (theEvent.getNewValue() instanceof final GameEvent event) {
+            switch (event) {
+                case final GameEvent.MoveEvent moveEvent ->
+                        enableValidDirections(moveEvent.validMoves());
+                case final GameEvent.NewGameEvent newGameEvent ->
+                        enableValidDirections(newGameEvent.validMoves());
+                default -> { }
+            }
         }
-
     }
 
-    private class MyNewKeyAdapter extends KeyAdapter {
+    /**
+     * Key adapter to handle 'N' key for starting a new game.
+     */
+    private final class MyNewKeyAdapter extends KeyAdapter {
 
         @Override
         public void keyPressed(final KeyEvent theEvent) {
@@ -238,53 +264,72 @@ public class GameController extends JPanel implements PropertyChangeListener {
         }
     }
 
-    private class MyControlsKeyAdapter extends KeyAdapter {
+    /**
+     * Key adapter to handle WASD keys for directional movement.
+     */
+    private final class MyControlsKeyAdapter extends KeyAdapter {
 
         @Override
         public void keyPressed(final KeyEvent theEvent) {
             mapKeys(theEvent.getKeyCode()).run();
         }
 
+        /**
+         * Maps key codes to game movement actions.
+         *
+         * @param theKeyCode the key code to map
+         * @return the corresponding movement action or no-op
+         */
         private Runnable mapKeys(final int theKeyCode) {
+            final Runnable doNothing = () -> { };
+
             return switch (theKeyCode) {
                 case KeyEvent.VK_W -> myGame::moveUp;
                 case KeyEvent.VK_S -> myGame::moveDown;
                 case KeyEvent.VK_A -> myGame::moveLeft;
                 case KeyEvent.VK_D -> myGame::moveRight;
-                default -> () -> { };
+                default -> doNothing;
             };
         }
     }
 
-    private class MyOtherControlseyAdapter extends KeyAdapter {
+    /**
+     * Alternative key adapter implementation using a map-based approach.
+     * Demonstrates a different pattern for key handling (unused in current implementation).
+     */
+    private final class MyOtherControlsKeyAdapter extends KeyAdapter {
 
+        /** Map of key codes to their corresponding game actions. */
         private final Map<Integer, Runnable> myKeyMap;
 
-        MyOtherControlseyAdapter() {
+        /**
+         * Constructs the adapter and initializes the key mapping.
+         */
+        MyOtherControlsKeyAdapter() {
+            super();
             myKeyMap = mapKeys();
         }
 
+        /**
+         * Creates the map of key codes to game actions.
+         *
+         * @return map of key codes to actions
+         */
         private Map<Integer, Runnable> mapKeys() {
             return Map.of(
                     KeyEvent.VK_W, myGame::moveUp,
                     KeyEvent.VK_S, myGame::moveDown,
-                    KeyEvent.VK_A, () -> myGame.moveDown(),
+                    KeyEvent.VK_A, myGame::moveDown,
                     KeyEvent.VK_D, myGame::moveRight);
         }
 
 
         @Override
         public void keyPressed(final KeyEvent theEvent) {
-            if (myKeyMap.containsKey(theEvent.getKeyCode())) {
-                myKeyMap.get(theEvent.getKeyCode()).run();
-            }
-
-            myKeyMap.getOrDefault(theEvent.getKeyCode(), () -> { }).run();
+            final Runnable doNothing = () -> { };
+            myKeyMap.getOrDefault(theEvent.getKeyCode(), doNothing).run();
         }
-
     }
-
-
 }
 
 

@@ -1,0 +1,332 @@
+package: edu.uw.tcss.game.model
+description: Model classes for a simple game with a piece moving on a board
+
+classes:
+  - name: GameControls
+    type: interface
+    version: Winter 2025
+    author: Charles Bryan
+    description: Defines mutable behaviors for a simple "game"
+
+    methods:
+      - name: move
+        parameters:
+          - name: theMove
+            type: Move
+            description: the direction in which to move the game piece
+        returns: void
+        description: Moves the game piece in the direction described by theMove. If the piece is unable to move in that direction, no action is performed.
+
+      - name: moveUp
+        parameters: []
+        returns: void
+        description: Moves the game piece up. If the piece is unable to move up, no action is performed.
+
+      - name: moveDown
+        parameters: []
+        returns: void
+        description: Moves the game piece down. If the piece is unable to move down, no action is performed.
+
+      - name: moveRight
+        parameters: []
+        returns: void
+        description: Moves the game piece right. If the piece is unable to move right, no action is performed.
+
+      - name: moveLeft
+        parameters: []
+        returns: void
+        description: Moves the game piece left. If the piece is unable to move left, no action is performed.
+
+      - name: newGame
+        parameters: []
+        returns: void
+        description: Starts a new game with the piece in the starting location.
+
+    nested_types:
+      - name: Move
+        type: enum
+        description: Constants describing the valid moves for a game piece
+        values:
+          - name: UP
+            description: Describes a move in the upward direction
+          - name: DOWN
+            description: Describes a move in the downward direction
+          - name: LEFT
+            description: Describes a move in the left direction
+          - name: RIGHT
+            description: Describes a move in the right direction
+
+      - name: ValidMoves
+        type: record
+        description: Data class that represents which moves are valid in the current state of the Game
+        components:
+          - name: moves
+            type: Map<Move, Boolean>
+            description: the Map which represents which moves are valid
+
+      - name: Point
+        type: record
+        description: Data class that represents a "point" on the game board. Positive x moves right across "columns". Positive y moves down "rows".
+        components:
+          - name: x
+            type: int
+            description: a singular x coordinate on the game board
+          - name: y
+            type: int
+            description: a singular y coordinate on the game board
+        methods:
+          - name: transform
+            parameters:
+              - name: theX
+                type: int
+              - name: theY
+                type: int
+            returns: Point
+            description: Creates a new Point by adding theX and theY to current coordinates
+
+  - name: PropertyChangeEnabledGameControls
+    type: interface
+    version: Autumn 2025
+    author: Charles Bryan
+    extends: GameControls
+    description: Defines behaviors allowing PropertyChangeListeners to be added or removed from a GameControls object. Implementing classes should inform PropertyChangeListeners when methods defined in GameControls API mutate the state of the object.
+
+    methods:
+      - name: addPropertyChangeListener
+        parameters:
+          - name: theListener
+            type: PropertyChangeListener
+            description: The PropertyChangeListener to be added
+        returns: void
+        description: Add a PropertyChangeListener to the listener list. The listener is registered for all properties. The same listener object may be added more than once, and will be called as many times as it is added. If listener is null, no exception is thrown and no action is taken.
+
+      - name: addPropertyChangeListener
+        parameters:
+          - name: thePropertyName
+            type: String
+            description: The name of the property to listen on
+          - name: theListener
+            type: PropertyChangeListener
+            description: The PropertyChangeListener to be added
+        returns: void
+        description: Add a PropertyChangeListener for a specific property. The listener will be invoked only when a call on firePropertyChange names that specific property. The same listener object may be added more than once. For each property, the listener will be invoked the number of times it was added for that property. If propertyName or listener is null, no exception is thrown and no action is taken.
+
+      - name: removePropertyChangeListener
+        parameters:
+          - name: theListener
+            type: PropertyChangeListener
+            description: The PropertyChangeListener to be removed
+        returns: void
+        description: Remove a PropertyChangeListener from the listener list. This removes a PropertyChangeListener that was registered for all properties. If listener was added more than once to the same event source, it will be notified one less time after being removed. If listener is null, or was never added, no exception is thrown and no action is taken.
+
+      - name: removePropertyChangeListener
+        parameters:
+          - name: thePropertyName
+            type: String
+            description: The name of the property that was listened on
+          - name: theListener
+            type: PropertyChangeListener
+            description: The PropertyChangeListener to be removed
+        returns: void
+        description: Remove a PropertyChangeListener for a specific property. If listener was added more than once to the same event source for the specified property, it will be notified one less time after being removed. If propertyName is null, no exception is thrown and no action is taken. If listener is null, or was never added for the specified property, no exception is thrown and no action is taken.
+
+  - name: GameEvent
+    type: sealed interface
+    version: Autumn 2025
+    author: Charles Bryan
+    description: Sealed interface representing type-safe events for the game's PropertyChangeListener framework. Each implementing record represents a specific event that can be observed, carrying the actual event data for compile-time safety. This design enables pattern matching and exhaustiveness checking in switch expressions when handling game events.
+
+    design_pattern: Sealed Classes + Records (Java 21)
+    permits:
+      - GameEvent.MoveEvent
+      - GameEvent.InvalidMoveEvent
+      - GameEvent.NewGameEvent
+
+    methods:
+      - name: timestamp
+        parameters: []
+        returns: long
+        description: Returns the timestamp when this event was created (milliseconds since epoch)
+
+      - name: getPropertyName
+        parameters: []
+        returns: String
+        description: Returns the property name for this event type, used when registering property-specific listeners. Default implementation returns the simple class name of the event (e.g., "MoveEvent", "NewGameEvent")
+        default_method: true
+
+      - name: now
+        parameters: []
+        returns: long
+        description: Helper method to get the current time in milliseconds since epoch
+        static_method: true
+
+    nested_types:
+      - name: MoveEvent
+        type: record
+        implements: GameEvent
+        description: Event fired when a valid move is made in any direction. This event consolidates the movement and the updated valid directions into a single atomic event, eliminating the need for multiple events per action.
+        components:
+          - name: direction
+            type: GameControls.Move
+            description: the direction of the successful move
+          - name: newLocation
+            type: GameControls.Point
+            description: the new location of the game piece after the move
+          - name: validMoves
+            type: GameControls.ValidMoves
+            description: the updated set of valid moves from the new location
+          - name: timestamp
+            type: long
+            description: when the event was created (milliseconds since epoch)
+
+      - name: InvalidMoveEvent
+        type: record
+        implements: GameEvent
+        description: Event fired when an invalid move is attempted. The piece remains at its current location.
+        components:
+          - name: currentLocation
+            type: GameControls.Point
+            description: the current location where the piece remains
+          - name: attemptedDirection
+            type: GameControls.Move
+            description: the direction that was attempted but invalid
+          - name: timestamp
+            type: long
+            description: when the event was created (milliseconds since epoch)
+
+      - name: NewGameEvent
+        type: record
+        implements: GameEvent
+        description: Event fired when a new game is started. The piece is reset to the starting location (typically 0, 0).
+        components:
+          - name: startingLocation
+            type: GameControls.Point
+            description: the starting location of the piece (typically 0, 0)
+          - name: validMoves
+            type: GameControls.ValidMoves
+            description: the initial set of valid moves from the starting position
+          - name: timestamp
+            type: long
+            description: when the event was created (milliseconds since epoch)
+
+  - name: Game
+    type: class (final)
+    version: Autumn 2025
+    author: Charles Bryan
+    implements: PropertyChangeEnabledGameControls
+    design_pattern: Singleton
+    description: The Game class simulates a simple game with a piece moving on a board. The game is made up of a board with a width and height (see public constants) and a piece that can move in four directions. This class implements the Singleton pattern to ensure only one game instance exists throughout the application. Game state changes are broadcast using the PropertyChangeListener pattern with type-safe sealed GameEvent types.
+
+    constants:
+      - name: WIDTH
+        type: int
+        value: 8
+        description: The width of the game board
+
+      - name: HEIGHT
+        type: int
+        value: 10
+        description: The height of the game board
+
+      - name: STARTING_LOCATION
+        type: Point
+        value: Point(0, 0)
+        description: The starting location of the game piece
+
+    methods:
+      - name: getInstance
+        parameters: []
+        returns: Game
+        description: Returns the singleton instance of Game. Uses double-checked locking for thread-safe lazy initialization.
+        static_method: true
+
+      - name: move
+        parameters:
+          - name: theMove
+            type: Move
+            description: the direction in which to move the game piece
+        returns: void
+        throws: NullPointerException when theMove is null
+        description: Attempts to move the game piece in the specified direction. On valid move, fires GameEvent.MoveEvent containing the direction, new location, and updated valid moves. On invalid move, fires GameEvent.InvalidMoveEvent containing the current location and attempted direction.
+
+      - name: moveUp
+        parameters: []
+        returns: void
+        description: Attempts to move the game piece up. Registered listeners will receive either a GameEvent.MoveEvent on success or a GameEvent.InvalidMoveEvent if the move is invalid.
+
+      - name: moveDown
+        parameters: []
+        returns: void
+        description: Attempts to move the game piece down. Registered listeners will receive either a GameEvent.MoveEvent on success or a GameEvent.InvalidMoveEvent if the move is invalid.
+
+      - name: moveRight
+        parameters: []
+        returns: void
+        description: Attempts to move the game piece right. Registered listeners will receive either a GameEvent.MoveEvent on success or a GameEvent.InvalidMoveEvent if the move is invalid.
+
+      - name: moveLeft
+        parameters: []
+        returns: void
+        description: Attempts to move the game piece left. Registered listeners will receive either a GameEvent.MoveEvent on success or a GameEvent.InvalidMoveEvent if the move is invalid.
+
+      - name: newGame
+        parameters: []
+        returns: void
+        description: Starts a new game by resetting the piece to the starting location (0, 0). All registered listeners will receive a GameEvent.NewGameEvent containing the starting location and initial valid moves.
+
+      - name: addPropertyChangeListener
+        parameters:
+          - name: theListener
+            type: PropertyChangeListener
+        returns: void
+        description: Add a PropertyChangeListener to the listener list
+
+      - name: addPropertyChangeListener
+        parameters:
+          - name: thePropertyName
+            type: String
+          - name: theListener
+            type: PropertyChangeListener
+        returns: void
+        description: Add a PropertyChangeListener for a specific property
+
+      - name: removePropertyChangeListener
+        parameters:
+          - name: theListener
+            type: PropertyChangeListener
+        returns: void
+        description: Remove a PropertyChangeListener from the listener list
+
+      - name: removePropertyChangeListener
+        parameters:
+          - name: thePropertyName
+            type: String
+          - name: theListener
+            type: PropertyChangeListener
+        returns: void
+        description: Remove a PropertyChangeListener for a specific property
+
+usage_example: |
+  // Get the singleton instance
+  Game game = Game.getInstance();
+
+  // Add a listener to observe game events
+  game.addPropertyChangeListener(evt -> {
+      if (evt.getNewValue() instanceof GameEvent event) {
+          switch (event) {
+              case GameEvent.MoveEvent e ->
+                  handleMove(e.direction(), e.newLocation(), e.validMoves());
+              case GameEvent.InvalidMoveEvent e ->
+                  handleInvalidMove(e.currentLocation(), e.attemptedDirection());
+              case GameEvent.NewGameEvent e ->
+                  handleNewGame(e.startingLocation(), e.validMoves());
+          }
+      }
+  });
+
+  // Start a new game
+  game.newGame();
+
+  // Move the piece
+  game.moveRight();
+  game.moveDown();

@@ -13,16 +13,12 @@ The "braces on same line" style for Autumn 2022 TCSS 305.
   <property name="severity" value="warning"/>
   <module name="LineLength">
     <property name="ignorePattern" value="(^ *//\*@ .+$)|(^ *@.+$)"/>
-    <property name="max" value="100"/>
+    <property name="max" value="95"/>
   </module>
   <module name="TreeWalker">
-    <module name="JavadocVariable">
-      <property name="scope" value="public"/>
-    </module>
+    <module name="JavadocVariable"/>
     <module name="MissingJavadocType"/>
-    <module name="MissingJavadocMethod">
-      <property name="scope" value="public"/>
-    </module>
+    <module name="MissingJavadocMethod"/>
     <module name="MissingJavadocPackage"/>
 
     <module name="JavadocStyle">
@@ -155,9 +151,6 @@ The "braces on same line" style for Autumn 2022 TCSS 305.
     </module>
     <module name="MissingSwitchDefault"/>
     <module name="ModifiedControlVariable"/>
-    <module name="MultipleStringLiterals">
-      <property name="ignoreOccurrenceContext" value="STATIC_INIT,ANNOTATION"/>
-    </module>
     <module name="MultipleVariableDeclarations">
       <message key="multiple.variable.declarations" value="Only one variable definition allowed per line."/>
     </module>
@@ -189,7 +182,14 @@ The "braces on same line" style for Autumn 2022 TCSS 305.
     <module name="FinalParameters">
       <property name="tokens" value="METHOD_DEF,CTOR_DEF,LITERAL_CATCH"/>
     </module>
-    <module name="Indentation"/>
+    <module name="Indentation">
+      <property name="basicOffset" value="4"/>
+      <property name="braceAdjustment" value="0"/>
+      <property name="caseIndent" value="4"/>
+      <property name="throwsIndent" value="4"/>
+      <property name="lineWrappingIndentation" value="8"/>
+      <property name="arrayInitIndent" value="4"/>
+    </module>
     <module name="UpperEll"/>
     <module name="OuterTypeNumber"/>
     <module name="LocalFinalVariableName">
