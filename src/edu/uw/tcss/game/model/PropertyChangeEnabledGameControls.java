@@ -6,78 +6,12 @@ import java.beans.PropertyChangeListener;
  * Defines behaviors allowing PropertyChangeListeners to be added or removed from a 
  * GameContols object. Implementing classes should inform PropertyChangeListeners
  * when methods defined in GameControls API mutate the state of the object.
- * <p>
- * Defines a set of Properties that may be listened too. Implementing class may further define
- * more Properties. 
  * 
  * @author Charles Bryan
- * @version Winter 2025
+ * @version Autumn 2025
  *
  */
 public interface PropertyChangeEnabledGameControls extends GameControls {
- 
-    /*
-     * Add your own constant Property values here. 
-     */
-
-    /**
-     * A property name for state changes on the model.
-     * Used when the game piece is moved up.
-     * Expected type for newValue() edu.uw.tcss.game.model.GameControls.Point
-     *      (the current location)
-     */
-    String PROPERTY_UP = "the piece moved UP!";
-
-    /**
-     * A property name for state changes on the model.
-     * Used when the game piece is moved DOWN.
-     * Expected type for newValue() edu.uw.tcss.game.model.GameControls.Point
-     *      (the current location)
-     */
-    String PROPERTY_DOWN = "the piece moved DOWN!";
-
-    /**
-     * A property name for state changes on the model.
-     * Used when the game piece is moved LEFT.
-     * Expected type for newValue() edu.uw.tcss.game.model.GameControls.Point
-     *      (the current location)
-     */
-    String PROPERTY_LEFT = "the piece moved LEFT!";
-
-    /**
-     * A property name for state changes on the model.
-     * Used when the game piece is moved RIGHT.
-     * Expected type for newValue() edu.uw.tcss.game.model.GameControls.Point
-     *      (the current location)
-     */
-    String PROPERTY_RIGHT = "the piece moved RIGHT!";
-
-    /**
-     * A property name for state changes on the model.
-     * Used when the game piece move is attempted but invalid.
-     * Expected type for newValue() Boolean Boolean.TRUE means invalid location
-     * Expected type for newValue() edu.uw.tcss.game.model.GameControls.Point
-     *      (the current location)
-     */
-    String PROPERTY_INVALID = "the piece can't move there!";
-
-    /**
-     * A property name for state changes on the model.
-     * Used when a new game is started.
-     * Expected type for newValue() edu.uw.tcss.game.model.GameControls.Point
-     *      (the current location)
-     */
-    String PROPERTY_NEW_GAME = "A new game is afoot!";
-
-    /**
-     * A property name for state changes on the model.
-     * Used when a new game is started and when the game piece location has changed.
-     * Expected type for newValue()
-     *      edu.uw.tcss.game.model.GameControls.ValidMoves
-     *          (the directions and whether or not they are valid)
-     */
-    String PROPERTY_VALID_DIRECTIONS = "These are the directions in which you may move!";
-
 
     /**
      * Add a PropertyChangeListener to the listener list. The listener is registered for 
