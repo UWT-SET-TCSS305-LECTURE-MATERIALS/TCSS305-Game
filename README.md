@@ -88,7 +88,7 @@ java -cp out edu.uw.tcss.game.gui.contoller.GameController
 ```
 
 ### Requirements
-- Java 21 or higher (uses sealed classes, records, pattern matching)
+- Java 25 or higher (uses sealed classes, records, pattern matching)
 
 ## How to Play
 

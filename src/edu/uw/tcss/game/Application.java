@@ -1,7 +1,7 @@
 package edu.uw.tcss.game;
 
 import com.formdev.flatlaf.FlatIntelliJLaf;
-import edu.uw.tcss.game.gui.contoller.GameController;
+import edu.uw.tcss.game.gui.controller.GameController;
 import javax.swing.SwingUtilities;
 
 /**
@@ -28,6 +28,9 @@ public final class Application {
      */
     public static void main(final String[] theArgs) {
         FlatIntelliJLaf.setup();
+//        FlatCarbonIJTheme.setup();
+//        FlatDarculaLaf.setup();
+
         SwingUtilities.invokeLater(GameController::createAndShowGUI);
     }
 }

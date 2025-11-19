@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TCSS 305 Game - Overview</title>
+</head>
+<body>
+<h1>TCSS 305 Game Application</h1>
+<p>Educational demonstration of modern Java design patterns.</p>
+
+<p>This is a simple grid-based game that demonstrates best practices in Java application design,
+including MVC architecture, the Observer pattern, and modern Java language features.</p>
+
+<h2>Application Entry Point</h2>
+<p><strong>Main Class:</strong> {@link edu.uw.tcss.game.Application#main(String[])}</p>
+
+<h2>Package Structure</h2>
+<dl>
+    <dt>{@link edu.uw.tcss.game.model}</dt>
+    <dd>Game logic and state management - Implements the Model in MVC pattern with Singleton
+    and Observer patterns</dd>
+
+    <dt>{@link edu.uw.tcss.game.gui.controller}</dt>
+    <dd>User input handling and game control - The Controller in MVC pattern</dd>
+
+    <dt>{@link edu.uw.tcss.game.gui.view}</dt>
+    <dd>Visual representation of game state - The View in MVC pattern</dd>
+
+    <dt>{@link edu.uw.tcss.game.gui.util}</dt>
+    <dd>GUI utility classes for icon creation and visual assets</dd>
+</dl>
+
+<h2>Key Design Patterns</h2>
+<ul>
+    <li><strong>Model-View-Controller (MVC)</strong> - Separation of concerns across packages</li>
+    <li><strong>Singleton</strong> - Single game instance pattern</li>
+    <li><strong>Observer</strong> - PropertyChangeListener for event-driven updates</li>
+    <li><strong>Immutable Records</strong> - Type-safe data transfer objects</li>
+    <li><strong>Sealed Classes</strong> - Controlled type hierarchies for events</li>
+</ul>
+
+<h2>Modern Java Features</h2>
+<p>This project demonstrates Java 21 features including records, sealed classes,
+pattern matching in switch expressions, and enhanced instanceof.</p>
+
+<p><em>Version: Winter 2025</em></p>
+</body>
+</html>
