@@ -13,6 +13,7 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Objects;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
@@ -143,17 +144,9 @@ public class GameBoardPanel extends JPanel implements PropertyChangeListener {
      * @return the theme-appropriate color for the games board.
      */
     private static Color getDrawColor() {
-        Color color = UIManager.getColor("Actions.Grey");
-
-        if (color == null) {
-            if (FlatLaf.isLafDark()) {
-                color = LIGHT_GREY;
-            } else {
-                color = DARK_GREY;
-            }
-        }
-
-        return color;
+        return Objects.requireNonNullElse(
+                UIManager.getColor("Actions.Grey"),
+                FlatLaf.isLafDark() ? LIGHT_GREY : DARK_GREY);
     }
 
     /**
@@ -165,13 +158,7 @@ public class GameBoardPanel extends JPanel implements PropertyChangeListener {
      * @return the theme-appropriate error color for invalid moves
      */
     private static Color getErrorColor() {
-        Color color = UIManager.getColor("Actions.Red");
-
-        if (color == null) {
-            color = Color.RED;
-        }
-
-        return color;
+        return Objects.requireNonNullElse(UIManager.getColor("Actions.Red"), Color.RED);
     }
 
     /**

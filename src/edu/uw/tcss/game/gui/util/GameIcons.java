@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.Objects;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 
@@ -85,17 +86,9 @@ public final class GameIcons {
      * @return the theme-appropriate color for icons
      */
     private static Color getIconColor() {
-        Color iconColor = UIManager.getColor("Actions.Grey");
-
-        if (iconColor == null) {
-            if (FlatLaf.isLafDark()) {
-                iconColor = LIGHT_GREY;
-            } else {
-                iconColor = DARK_GREY;
-            }
-        }
-
-        return iconColor;
+        return Objects.requireNonNullElse(
+                UIManager.getColor("Actions.Grey"),
+                FlatLaf.isLafDark() ? LIGHT_GREY : DARK_GREY);
     }
 
     /**
