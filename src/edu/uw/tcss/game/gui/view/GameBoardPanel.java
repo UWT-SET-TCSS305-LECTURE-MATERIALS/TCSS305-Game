@@ -1,5 +1,6 @@
 package edu.uw.tcss.game.gui.view;
 
+import com.formdev.flatlaf.FlatLaf;
 import edu.uw.tcss.game.model.Game;
 import edu.uw.tcss.game.model.GameControls;
 import edu.uw.tcss.game.model.GameEvent;
@@ -13,6 +14,7 @@ import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 /**
  * Visual representation of a Game, displaying the game board and piece.
@@ -33,6 +35,12 @@ public class GameBoardPanel extends JPanel implements PropertyChangeListener {
      */
     private static final Path2D GRID_PATH = createGridPath();
 
+    /** Light grey fallback color. */
+    private static final Color LIGHT_GREY = new Color(175, 177, 179);
+
+    /** Light grey fallback color. */
+    private static final Color DARK_GREY = new Color(47, 45, 43);
+
     /**
      * Pre-calculated rectangle representing the game piece.
      * Updated when the piece moves, eliminating calculations during painting.
@@ -51,7 +59,7 @@ public class GameBoardPanel extends JPanel implements PropertyChangeListener {
         myGamePiece = new Rectangle2D.Double(
                 Integer.MIN_VALUE, Integer.MIN_VALUE,
                 GAME_PIECE_SIZE, GAME_PIECE_SIZE);
-        myPieceColor = Color.BLACK;
+        myPieceColor = getDrawColor();
     }
 
     /**
@@ -118,12 +126,52 @@ public class GameBoardPanel extends JPanel implements PropertyChangeListener {
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
         // Draw pre-calculated grid lines
-        g2d.setPaint(Color.BLACK);
+        g2d.setPaint(getDrawColor());
         g2d.draw(GRID_PATH);
 
         // Draw pre-calculated game piece rectangle
         g2d.setPaint(myPieceColor);
         g2d.fill(myGamePiece);
+    }
+
+    /**
+     * Gets the appropriate color based on the current FlatLaf theme.
+     * Uses FlatLaf's Actions.Grey color which automatically adapts:
+     * - Light themes: darker grey (#6E6E6E)
+     * - Dark themes: lighter grey (#AFB1B3)
+     *
+     * @return the theme-appropriate color for the games board.
+     */
+    private static Color getDrawColor() {
+        Color color = UIManager.getColor("Actions.Grey");
+
+        if (color == null) {
+            if (FlatLaf.isLafDark()) {
+                color = LIGHT_GREY;
+            } else {
+                color = DARK_GREY;
+            }
+        }
+
+        return color;
+    }
+
+    /**
+     * Gets the appropriate error color based on the current FlatLaf theme.
+     * Uses FlatLaf's Actions.Red color which automatically adapts:
+     * - Light themes: darker red (#DB5860)
+     * - Dark themes: lighter red (#C75450)
+     *
+     * @return the theme-appropriate error color for invalid moves
+     */
+    private static Color getErrorColor() {
+        Color color = UIManager.getColor("Actions.Red");
+
+        if (color == null) {
+            color = Color.RED;
+        }
+
+        return color;
     }
 
     /**
@@ -133,15 +181,15 @@ public class GameBoardPanel extends JPanel implements PropertyChangeListener {
      */
     private void movePiece(final GameControls.Point theLocation) {
         updatePieceRectangle(theLocation.x(), theLocation.y());
-        myPieceColor = Color.BLACK;
+        myPieceColor = getDrawColor();
         repaint();
     }
 
     /**
-     * Handles an invalid move attempt by changing the piece color to red.
+     * Handles an invalid move attempt by changing the piece color to the error color.
      */
     private void invalidMove() {
-        myPieceColor = Color.RED;
+        myPieceColor = getErrorColor();
         repaint();
     }
 
@@ -152,7 +200,7 @@ public class GameBoardPanel extends JPanel implements PropertyChangeListener {
      */
     private void startGame(final GameControls.Point theStartLocation) {
         updatePieceRectangle(theStartLocation.x(), theStartLocation.y());
-        myPieceColor = Color.BLACK;
+        myPieceColor = getDrawColor();
         repaint();
     }
 

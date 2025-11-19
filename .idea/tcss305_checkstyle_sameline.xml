@@ -11,6 +11,10 @@ The "braces on same line" style for Autumn 2022 TCSS 305.
 -->
 <module name="Checker">
   <property name="severity" value="warning"/>
+  <module name="SuppressionFilter">
+    <property name="file" value="${config_loc}/checkstyle-test-suppressions.xml"/>
+    <property name="optional" value="true"/>
+  </module>
   <module name="LineLength">
     <property name="ignorePattern" value="(^ *//\*@ .+$)|(^ *@.+$)"/>
     <property name="max" value="95"/>

@@ -1,12 +1,11 @@
- 
-package edu.uw.tcss.game.gui.contoller;
+
+package edu.uw.tcss.game.gui.controller;
 
 import edu.uw.tcss.game.gui.util.GameIcons;
 import edu.uw.tcss.game.gui.view.GameBoardPanel;
 import edu.uw.tcss.game.model.Game;
 import edu.uw.tcss.game.model.GameControls;
 import edu.uw.tcss.game.model.GameEvent;
-import edu.uw.tcss.game.model.PropertyChangeEnabledGameControls;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
@@ -64,7 +63,7 @@ public class GameController extends JPanel implements PropertyChangeListener {
     private static final int WINDOW_SIZE = 200;
     
     /** The Game object this class controls. */
-    private final PropertyChangeEnabledGameControls myGame;
+    private final GameControls myGame;
 
     /** Button to move the game piece up. */
     private final JButton myUpButton;
@@ -139,32 +138,28 @@ public class GameController extends JPanel implements PropertyChangeListener {
      * Adds action and key listeners to buttons and panel.
      */
     private void addListeners() {
-        myUpButton.addActionListener(theEvent -> {
-            myGame.moveUp();
-            // needed to give focus back to the containing panel. This is so that
-            // the panel with the KeyListener captures the KeyEvents, not the
-            // button that was just clicked.
-            requestFocusInWindow();
-        });
-        myDownButton.addActionListener(theEvent -> {
-            myGame.moveDown();
-            requestFocusInWindow(); // See above
-        });
-        myRightButton.addActionListener(theEvent -> {
-            myGame.moveRight();
-            requestFocusInWindow(); // See above
-        });
-        myLeftButton.addActionListener(theEvent -> {
-            myGame.moveLeft();
-            requestFocusInWindow(); // See above
-        });
-        myNewGameButton.addActionListener(theEvent -> {
-            myGame.newGame();
-            requestFocusInWindow(); // See above
-        });
+        myUpButton.addActionListener(theEvent ->
+                buttonAction(myGame::moveUp));
+        myDownButton.addActionListener(theEvent ->
+                buttonAction(myGame::moveDown));
+        myRightButton.addActionListener(theEvent ->
+                buttonAction(myGame::moveRight));
+        myLeftButton.addActionListener(theEvent ->
+                buttonAction(myGame::moveLeft));
+        myNewGameButton.addActionListener(theEvent ->
+                buttonAction(myGame::newGame));
+
         addKeyListener(new MyNewKeyAdapter());
         myNewGameButton.addKeyListener(new MyNewKeyAdapter());
         addKeyListener(new MyControlsKeyAdapter());
+    }
+
+    private void buttonAction(final Runnable theGameAction) {
+        theGameAction.run();
+        // needed to give focus back to the containing panel. This is so that
+        // the panel with the KeyListener captures the KeyEvents, not the
+        // button that was just clicked.
+        requestFocusInWindow();
     }
 
     /**
@@ -246,7 +241,7 @@ public class GameController extends JPanel implements PropertyChangeListener {
                         enableValidDirections(moveEvent.validMoves());
                 case final GameEvent.NewGameEvent newGameEvent ->
                         enableValidDirections(newGameEvent.validMoves());
-                default -> { }
+                case final GameEvent.InvalidMoveEvent e -> { }  // Explicitly ignored
             }
         }
     }

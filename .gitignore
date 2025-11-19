@@ -27,3 +27,16 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### AI Coding Agents ###
+.cursor/
+.aider*
+.continue/
+.cline/
+.windsurf/
+.ai/
+.copilot/
+.anthropic/
+.claude/
+*.aider*
+aider.chat.history*

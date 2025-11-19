@@ -1,5 +1,6 @@
 package edu.uw.tcss.game.gui.util;
 
+import com.formdev.flatlaf.FlatLaf;
 import edu.uw.tcss.game.model.GameControls;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -7,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
+import javax.swing.UIManager;
 
 /**
  * Utility class for creating game control icons.
@@ -28,6 +30,12 @@ public final class GameIcons {
 
     /** The offset from center for arrow drawing. */
     private static final int OFFSET = ICON_SIZE / 3;
+
+    /** Light grey fallback color. */
+    private static final Color LIGHT_GREY = new Color(175, 177, 179);
+
+    /** Light grey fallback color. */
+    private static final Color DARK_GREY = new Color(47, 45, 43);
 
     /**
      * Private constructor to prevent instantiation.
@@ -57,14 +65,37 @@ public final class GameIcons {
 
     /**
      * Configures graphics context with antialiasing and drawing properties.
+     * Uses theme-aware colors from FlatLaf - automatically adapts to light/dark themes.
      *
      * @param theG2d the graphics context to configure
      */
     private static void setupGraphics(final Graphics2D theG2d) {
         theG2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        theG2d.setColor(Color.BLACK);
+        theG2d.setColor(getIconColor());
         theG2d.setStroke(new BasicStroke(STROKE_WIDTH));
+    }
+
+    /**
+     * Gets the appropriate icon color based on the current FlatLaf theme.
+     * Uses FlatLaf's Actions.Grey color which automatically adapts:
+     * - Light themes: darker grey (#6E6E6E)
+     * - Dark themes: lighter grey (#AFB1B3)
+     *
+     * @return the theme-appropriate color for icons
+     */
+    private static Color getIconColor() {
+        Color iconColor = UIManager.getColor("Actions.Grey");
+
+        if (iconColor == null) {
+            if (FlatLaf.isLafDark()) {
+                iconColor = LIGHT_GREY;
+            } else {
+                iconColor = DARK_GREY;
+            }
+        }
+
+        return iconColor;
     }
 
     /**
